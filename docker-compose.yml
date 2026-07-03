@@ -1,0 +1,33 @@
+services:
+  mongodb:
+    image: mongo:8
+    container_name: travelmemory-mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+  backend:
+    build: ./backend
+    container_name: travelmemory-backend
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      PORT: 5000
+      MONGO_URI: mongodb://mongodb:27017/travelmemory
+    depends_on:
+      - mongodb
+
+  frontend:
+    build: ./frontend
+    container_name: travelmemory-frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  mongodb_data:
